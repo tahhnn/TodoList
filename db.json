@@ -1,0 +1,15 @@
+{
+  "products": [
+    {
+      "name": "Sản phẩm da",
+      "isCompleted": "Done",
+      "id": 1
+    },
+    {
+      "name": "Sản phẩm C",
+      "isCompleted": "Done",
+      "id": 2
+    }
+  ],
+  "users": []
+}

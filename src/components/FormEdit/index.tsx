@@ -1,50 +1,89 @@
-import { useState } from 'react'
-import { useMutation, useQuery } from 'react-query'
-import { update } from '../../api/product'
+'use client'
+import { useProductQuery } from '@/hooks/useQuery'
+import { useNavigate, useParams } from 'react-router-dom'
 
-const FormEdit = ({ editTodo, setInput }: any) => {
-    const { refetch } = useQuery('PRODUCT')
-    const [inputValue, setInputValue] = useState<any>({
-        ...editTodo
-    })
+import { useMutationTodo } from '@/hooks/useMutations'
+import { useToast } from '../ui/use-toast'
 
-    const mutation = useMutation<any>({
-        mutationFn: (product: any) => update(product),
+export function FormEdit() {
+    const { id } = useParams()
+    const navigate = useNavigate()
+    const { data, isLoading } = useProductQuery(id ? +id : 0)
+    console.log(id)
+    const { toast } = useToast()
+    const { onSubmit, register, handleSubmit } = useMutationTodo({
+        action: 'UPDATE',
         onSuccess: () => {
-            refetch()
-            setInput([])
+            navigate('/')
+            toast({
+                description: 'Cập nhật thành công',
+                variant: 'meomeo'
+            })
         }
     })
 
-    const onSubmit = async (e: any) => {
-        e.preventDefault()
-        mutation.mutate(inputValue as any)
+    const handleContinue = (valuesInput: any) => {
+        onSubmit({ ...valuesInput, id })
     }
-    const handleInputChange = (e: any) => {
-        const { name, value } = e.target
-        const id = editTodo.id
-        console.log('Name: ' + name)
-        console.log('Value: ' + value)
-
-        setInputValue({
-            ...editTodo,
-            id,
-            [name]: value
-        })
-    }
-
     return (
         <>
-            <form onSubmit={onSubmit}>
-                <input type='text' name='name' defaultValue={editTodo?.name} onChange={handleInputChange} />
-                <select name='isCompleted' defaultValue={editTodo?.isCompleted} onChange={handleInputChange}>
-                    <option value='Done'>Completed</option>
-                    <option value='Pending'>Pending</option>
-                </select>
-                <button>Sửa</button>
-            </form>
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
+                <form onSubmit={handleSubmit(handleContinue)}>
+                    <div className='mb-6'>
+                        <label htmlFor='name' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
+                            Tên công việc
+                        </label>
+                        <input
+                            {...register('name')}
+                            defaultValue={data?.name}
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-54 mx-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        />
+                    </div>
+                    <div className='mb-6'>
+                        <label
+                            htmlFor='isCompleted'
+                            className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                        >
+                            Tình trạng
+                        </label>
+                        <select
+                            {...register('isCompleted')}
+                            defaultValue={data?.isCompleted || 'Pending'}
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-64 mx-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        >
+                            <option value='Completed'>Completed</option>
+                            <option value='Pending'>Pending</option>
+                        </select>
+                    </div>
+
+                    <div className='mb-6'>
+                        <label
+                            htmlFor='priority'
+                            className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                        >
+                            Mức độ
+                        </label>
+                        <select
+                            {...register('priority')}
+                            defaultValue={data?.priority}
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-64 mx-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        >
+                            <option value='Dễ'>Dễ</option>
+                            <option value='Trung bình'>Trung bình</option>
+                            <option value='Khó'>Khó</option>
+                        </select>
+                    </div>
+
+                    <button
+                        type='submit'
+                        className='py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700'
+                    >
+                        Sửa
+                    </button>
+                </form>
+            )}
         </>
     )
 }
-
-export default FormEdit

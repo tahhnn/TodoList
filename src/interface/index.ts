@@ -1,5 +1,6 @@
 export interface IProduct {
-    id: string
+    id?: string
     name: string
-    isCompleted: boolean
+    isCompleted: string
+    priority: string
 }

@@ -1,10 +1,10 @@
 import axios from 'axios'
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3000/products'
+    baseURL: 'http://localhost:3000/'
 })
 instance.interceptors.response.use(
-    (res) => {
+    (res: any) => {
         return res.data
     },
     function (error) {

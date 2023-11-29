@@ -1,148 +1,120 @@
-import { useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { useMutation, useQuery } from 'react-query'
-import { getAll, remove, update } from '../../api/product'
-import { Button } from '../ui/button'
+
 import { DataTable } from './component/DataTable'
-
+import { useProductQuery } from '@/hooks/useQuery'
+import { DropdownMenuCheckboxes } from './component/DropDown'
+import { Link, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Toaster } from '../ui/toaster'
+import { DropdownMenuDemo } from './component/element/DropDownOption'
+import { Button } from '../ui/button'
+const columns: ColumnDef<any>[] = [
+    {
+        accessorKey: 'name',
+        header: () => <h4 className='text-center text-xl'>Tên công việc</h4>,
+        cell: ({ row: { original } }) => {
+            return (
+                <>
+                    <p>{original.name}</p>
+                </>
+            )
+        }
+    },
+    {
+        accessorKey: 'isCompleted',
+        header: () => <p className='text-center'>Trạng thái</p>,
+        cell: ({ row: { original } }) => {
+            return (
+                <>
+                    <p>{original.isCompleted}</p>
+                </>
+            )
+        }
+    },
+    {
+        accessorKey: 'priority',
+        header: () => <p className='text-center'>Độ phức tạp</p>,
+        cell: ({ row: { original } }) => {
+            return (
+                <>
+                    <p>{original.priority}</p>
+                </>
+            )
+        }
+    },
+    {
+        id: 'action',
+        cell: ({ row: { original } }) => {
+            return (
+                <>
+                    <DropdownMenuCheckboxes id={original.id} />
+                </>
+            )
+        }
+    }
+]
 const ProductList = () => {
-    const [editTodo, setProductEdit] = useState<any>([])
-    const [isInput, setInput] = useState<any>({})
-    const [isInputSelect, setInputSelect] = useState<any>({})
-    const {
-        isLoading,
-        isError,
-        data: todos,
-        refetch
-    } = useQuery<any>({
-        queryKey: 'PRODUCT',
-        queryFn: () => {
-            const data = getAll()
-            return data
+    const [isLog, setLogin] = useState(false)
+    const { data, isLoading, isError } = useProductQuery()
+    const { param } = useParams()
+    const [filteredData, setFilteredData] = useState([])
+    const user = JSON.parse(localStorage.getItem('user'))
+
+    useEffect(() => {
+        if (user?.accessToken != undefined) {
+            setLogin(true)
+        } else {
+            setLogin(false)
         }
-    })
-    const handleEditInput = (id: any) => {
-        setInput((prevValue: any) => ({
-            [id]: !prevValue[id]
-        }))
-
-        const dataUpdate = todos?.find((p: any) => p.id === id)
-        setProductEdit(dataUpdate)
-    }
-    const handleEditSelect = (id: any) => {
-        setInputSelect((prevValue: any) => ({
-            [id]: !prevValue[id]
-        }))
-
-        const dataUpdate = todos?.find((p: any) => p.id === id)
-        setProductEdit(dataUpdate)
-    }
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
-        setProductEdit((prev: any) => ({
-            ...prev,
-            [name]: value
-        }))
-    }
-    const mutation = useMutation<any>({
-        mutationFn: (product: any) => update(product),
-        onSuccess: () => {
-            refetch()
-            setInput({})
-            setInputSelect({})
-        }
-    })
-    const handleSubmit = (e: any) => {
-        e.preventDefault()
-        mutation.mutate(editTodo as any)
-    }
-
-    const onDelete = (id: any) => {
-        remove(id).then(() => {
-            refetch()
-        })
-    }
-    const columns: ColumnDef<any>[] = [
-        {
-            accessorKey: 'name',
-            header: () => <h4 className='text-center text-xl'>Tên công việc</h4>,
-            cell: ({ row: { original } }) => {
-                return (
-                    <>
-                        {isInput[original.id] ? (
-                            <form onSubmit={handleSubmit}>
-                                <input
-                                    type='text'
-                                    name='name'
-                                    defaultValue={editTodo.name || ''}
-                                    onChange={handleChange}
-                                />
-                                <button type='submit'>Xác nhận</button>
-                            </form>
-                        ) : (
-                            <p
-                                onClick={() => {
-                                    handleEditInput(original.id)
-                                }}
-                            >
-                                {original.name}
-                            </p>
-                        )}
-                    </>
-                )
-            }
-        },
-        {
-            accessorKey: 'isCompleted',
-            header: () => <p className='text-center'>Trạng thái</p>,
-            cell: ({ row: { original } }) => {
-                return (
-                    <>
-                        {isInputSelect[original.id] ? (
-                            <form onSubmit={handleSubmit}>
-                                <select
-                                    name='isCompleted'
-                                    defaultValue={editTodo.isCompleted || ''}
-                                    onChange={handleChange}
-                                >
-                                    <option value='Done'>Completed</option>
-                                    <option value='Pending'>Pending</option>
-                                </select>
-                                <button type='submit'>Xác nhận</button>
-                            </form>
-                        ) : (
-                            <p
-                                onClick={() => {
-                                    handleEditSelect(original.id)
-                                }}
-                            >
-                                {original.isCompleted}
-                            </p>
-                        )}
-                    </>
-                )
-            }
-        },
-        {
-            id: 'action',
-            cell: ({ row: { original } }) => {
-                return (
-                    <>
-                        <Button variant={'outline'} onClick={() => onDelete(original.id)}>
-                            Xóa
-                        </Button>
-                    </>
-                )
+        if (data) {
+            switch (param) {
+                case 'easy':
+                    setFilteredData(data.filter((p: any) => p.priority === 'Dễ'))
+                    break
+                case 'medium':
+                    setFilteredData(data.filter((p: any) => p.priority === 'Trung bình'))
+                    break
+                case 'hard':
+                    setFilteredData(data.filter((p: any) => p.priority === 'Khó'))
+                    break
+                default:
+                    setFilteredData(data)
+                    break
             }
         }
-    ]
+    }, [data, param])
 
     return (
         <>
             {isLoading && <p>Loading...</p>}
-            {isError && <p>Error....</p>}
-
-            <DataTable columns={columns} data={todos || []} />
+            <Toaster />
+            {isLog ? (
+                <div>
+                    <p>Xin chào {user.user.email}</p>
+                    <Button
+                        variant={'destructive'}
+                        onClick={() => {
+                            localStorage.clear()
+                            setLogin(false)
+                        }}
+                    >
+                        Đăng xuất
+                    </Button>
+                </div>
+            ) : (
+                <div>
+                    <Button variant={'link'}>
+                        <Link to={'/signin'}>Đăng nhập</Link>
+                    </Button>
+                    <Button variant={'link'}>
+                        <Link to={'/signup'}>Đăng ký</Link>
+                    </Button>
+                </div>
+            )}
+            <DataTable columns={columns} data={filteredData || []} />
+            <div className='mx-auto pt-2'>
+                <DropdownMenuDemo />
+            </div>
         </>
     )
 }

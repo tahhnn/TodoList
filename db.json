@@ -1,15 +1,17 @@
 {
   "products": [
     {
-      "name": "Sản phẩm da",
-      "isCompleted": "Done",
+      "name": "Nau com",
+      "isCompleted": "Completed",
+      "priority": "Dễ",
       "id": 1
-    },
-    {
-      "name": "Sản phẩm C",
-      "isCompleted": "Done",
-      "id": 2
     }
   ],
-  "users": []
+  "users": [
+    {
+      "email": "aduanhthanh@gmail.com",
+      "password": "$2a$10$ZMTbC6SiUew0fLPxcK8ruO5y6YPN3fqcvScKy04Zdry5O/o5wHsfy",
+      "id": 1
+    }
+  ]
 }

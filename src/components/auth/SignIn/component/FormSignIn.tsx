@@ -3,23 +3,27 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import useAuthMutation from '@/hooks/useMutationAuth'
+import { useLocalStorage } from '@/hooks/useStorage'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const Signup = () => {
+const FormSignIn = () => {
     const { toast } = useToast()
     const navigate = useNavigate()
+
     const { form, onSubmit } = useAuthMutation({
         action: 'SIGN_IN',
         onSuccess: () => {
             toast({
                 description: 'Đăng Nhập thành công'
             })
-            form.reset()
             navigate('/')
         }
     })
+
     return (
         <div>
+            <h1 className='font-bold'>Đăng Nhập</h1>
+
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField
@@ -49,7 +53,7 @@ const Signup = () => {
                         )}
                     />
                     <Button variant='destructive' type='submit'>
-                        Đăng ký
+                        Đăng Nhập
                     </Button>
                 </form>
             </Form>
@@ -57,4 +61,4 @@ const Signup = () => {
     )
 }
 
-export default Signup
+export default FormSignIn

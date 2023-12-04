@@ -5,15 +5,16 @@ import './index.css'
 import ProductProvider from './context/Product.tsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter } from 'react-router-dom'
+import LocalStorageProvider from './context/LocalStorage.tsx'
 const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                <ProductProvider>
+                <LocalStorageProvider>
                     <App />
-                </ProductProvider>
+                </LocalStorageProvider>
             </BrowserRouter>
         </QueryClientProvider>
     </React.StrictMode>

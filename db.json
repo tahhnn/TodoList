@@ -1,10 +1,22 @@
 {
   "products": [
     {
-      "name": "Nau com",
-      "isCompleted": "Completed",
+      "isCompleted": "Pending",
+      "name": "Lau nhà",
       "priority": "Dễ",
       "id": 1
+    },
+    {
+      "isCompleted": "Pending",
+      "name": "Rửa bát",
+      "priority": "Trung bình",
+      "id": 2
+    },
+    {
+      "isCompleted": "Pending",
+      "name": "Giặt quần áo",
+      "priority": "Khó",
+      "id": 3
     }
   ],
   "users": [
@@ -12,6 +24,31 @@
       "email": "aduanhthanh@gmail.com",
       "password": "$2a$10$ZMTbC6SiUew0fLPxcK8ruO5y6YPN3fqcvScKy04Zdry5O/o5wHsfy",
       "id": 1
+    },
+    {
+      "email": "123@gmail.com",
+      "password": "$2a$10$/1EpZgtamL/arp1HP.5VMuEzk0cr4rKZZkAYS6gUyQbzeJclhu/uW",
+      "id": 2
+    },
+    {
+      "email": "aduananh@gmail.com",
+      "password": "$2a$10$quNanJLxyLQPLH0EVo08huOQ4ZEDmsPGw13LVELsZj/N/VHECq.uS",
+      "id": 3
+    },
+    {
+      "email": "thanhbcph29419@gmail.com",
+      "password": "$2a$10$y/QT/UOrjBGycYvB/DA65.0UyCAsjCmUaxzBpXDALLrTWmleXl9c2",
+      "id": 4
+    },
+    {
+      "email": "thanhbcph2941@gmail.com",
+      "password": "$2a$10$fbPaTBXy0P8yL1ihpdeDsOwmQIwa7fV6zlIKPMn1Z6tZQyGK/uNU6",
+      "id": 5
+    },
+    {
+      "email": "thanhbcph291@gmail.com",
+      "password": "$2a$10$kZAsBiowBQy3a/CoGk81NeQougWkCpT/EKDlP1htnkrTLp1YmdZiy",
+      "id": 6
     }
   ]
 }

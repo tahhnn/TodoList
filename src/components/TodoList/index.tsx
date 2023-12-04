@@ -3,11 +3,12 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from './component/DataTable'
 import { useProductQuery } from '@/hooks/useQuery'
 import { DropdownMenuCheckboxes } from './component/DropDown'
-import { Link, useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react'
 import { Toaster } from '../ui/toaster'
 import { DropdownMenuDemo } from './component/element/DropDownOption'
 import { Button } from '../ui/button'
+import { LocalStorage } from '@/context/LocalStorage'
 const columns: ColumnDef<any>[] = [
     {
         accessorKey: 'name',
@@ -53,19 +54,16 @@ const columns: ColumnDef<any>[] = [
         }
     }
 ]
-const ProductList = () => {
+const TodoList = () => {
     const [isLog, setLogin] = useState(false)
+    const navigate = useNavigate()
     const { data, isLoading, isError } = useProductQuery()
     const { param } = useParams()
     const [filteredData, setFilteredData] = useState([])
-    const user = JSON.parse(localStorage.getItem('user'))
+    const { user, removeUser } = useContext(LocalStorage)
+    console.log(user)
 
     useEffect(() => {
-        if (user?.accessToken != undefined) {
-            setLogin(true)
-        } else {
-            setLogin(false)
-        }
         if (data) {
             switch (param) {
                 case 'easy':
@@ -82,35 +80,20 @@ const ProductList = () => {
                     break
             }
         }
-    }, [data, param])
+    }, [data, param, isLog])
 
     return (
         <>
             {isLoading && <p>Loading...</p>}
             <Toaster />
-            {isLog ? (
+            {user ? (
                 <div>
-                    <p>Xin chào {user.user.email}</p>
-                    <Button
-                        variant={'destructive'}
-                        onClick={() => {
-                            localStorage.clear()
-                            setLogin(false)
-                        }}
-                    >
+                    <p>Xin chào {user?.user?.email}</p>
+                    <Button variant={'destructive'} onClick={removeUser}>
                         Đăng xuất
                     </Button>
                 </div>
-            ) : (
-                <div>
-                    <Button variant={'link'}>
-                        <Link to={'/signin'}>Đăng nhập</Link>
-                    </Button>
-                    <Button variant={'link'}>
-                        <Link to={'/signup'}>Đăng ký</Link>
-                    </Button>
-                </div>
-            )}
+            ) : null}
             <DataTable columns={columns} data={filteredData || []} />
             <div className='mx-auto pt-2'>
                 <DropdownMenuDemo />
@@ -119,4 +102,4 @@ const ProductList = () => {
     )
 }
 
-export default ProductList
+export default TodoList

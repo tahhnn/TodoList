@@ -4,6 +4,9 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useLocalStorage } from './useStorage'
 import { signIn, signUp } from '@/api/auth'
 import Joi from 'joi'
+import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { LocalStorage } from '@/context/LocalStorage'
 
 const formSchema = Joi.object({
     email: Joi.string()
@@ -32,12 +35,12 @@ type useAuthMutationProps = {
 
 const useAuthMutation = ({ action, defaultValues = { email: '', password: '' }, onSuccess }: useAuthMutationProps) => {
     const queryClient = useQueryClient()
-    const [, setUser] = useLocalStorage('user', {})
+    const navigate = useNavigate()
+    const { setUser } = useContext(LocalStorage)
     const { mutate, ...rest } = useMutation({
         mutationFn: async (user: any) => {
             switch (action) {
                 case 'SIGN_IN':
-                    // call api signin
                     return await signIn(user)
 
                 case 'SIGN_UP':
@@ -53,7 +56,8 @@ const useAuthMutation = ({ action, defaultValues = { email: '', password: '' }, 
             onSuccess && onSuccess()
             if (action === 'SIGN_IN') {
                 if (data?.accessToken) {
-                    localStorage.setItem('user', JSON.stringify(data))
+                    setUser(data)
+                    navigate('/')
                 }
             }
 

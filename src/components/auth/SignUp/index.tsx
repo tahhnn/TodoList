@@ -12,14 +12,14 @@ const Signup = () => {
         action: 'SIGN_UP',
         onSuccess: () => {
             toast({
-                description: 'Đăng ký thành công'
+                description: 'Tiến hành đăng nhập nào'
             })
-            form.reset()
-            navigate('/')
+            navigate('/signin')
         }
     })
     return (
         <div>
+            <h1 className='font-bold'>Đăng ký</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField
